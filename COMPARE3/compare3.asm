@@ -3,7 +3,7 @@
 ;		FIX EXIT BUG.
 ;		FOR HELP TYPE:  COMPARE
 ;				  OR
-;				COMPARE $?
+;				COMPARE /?
 ;
 ;REQUIRES MAC.COM AND SEQIOU.LIB FOR ASSEMBLY
 ; SEQIOU.LIB IS A REVISED VERSION OF SEQIO.LIB FROM CPMUG VOL 29
@@ -52,7 +52,7 @@ INIT:	DCR	E
 	INX	H
 	INX	H
 	MOV	A,M
-	CPI	'$'	;IS SPACE FOLLOWED BY $ ?
+	CPI	'/'	;IS SPACE FOLLOWED BY '/' ?
 	JNZ	INIT2	;NO, OPTIONS NOT SPECIFIED.
 	INX	H	;YES, CHECK NEXT CHAR.
 	MOV	A,M
@@ -596,20 +596,23 @@ USAGE	DB	CR,LF
 	DB	'Determines if two files are equal',CR,LF
 	DB	'   Usage:',CR,LF,CR,LF
 	DB	'COMPARE [du:]UFN1.UFT [du:][UFN2.UFT] ['
-	DB	'$' OR 80H		;ALLOWS DOLLAR SIGN IN MESSAGE
+	;DB	'$' OR 80H		;ALLOWS DOLLAR SIGN IN MESSAGE
+	DB	'/'
 	DB	'S[ADDR]]',CR,LF,CR,LF
 	DB	'du are optional drive and user area for the files.',CR,LF
 	DB	'UFN1.TYP is the first unambiguous file name.',CR,LF
 	DB	'UFN2.TYP is the second unambiguous file name and',CR,LF
 	DB	'will default to UFN1.TYP if only du2: is given.',CR,LF
 	DB	CR,LF
-	DB	'The optional ', '$' OR 80H, 'S '
+	;DB	'The optional ', '$' OR 80H, 'S '
+	DB	'The optional ', '/', 'S '
 	DB	'is primarily for .COM or similar files',CR,LF
 	DB	'and will Show all addresses with data bytes that differ.'
 	DB	CR,LF
 	DB	'ADDR is an optional HEX origin address (default = 0100)'
 	DB	CR,LF,CR,LF
-	DB	'Example:    COMPARE B:FOOBAR.COM C3:WOMBAT.OBJ ','$' OR 80H
+	;DB	'Example:    COMPARE B:FOOBAR.COM C3:WOMBAT.OBJ ','$' OR 80H
+	DB	'Example:    COMPARE B:FOOBAR.COM C3:WOMBAT.OBJ ','/'
 	DB	'S7E00',CR,LF
 	DB	'$'
 ;

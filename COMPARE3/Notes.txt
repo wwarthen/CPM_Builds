@@ -1,0 +1,10 @@
+The distributed version of COMPARE used a '$' as an option delimiter.
+The '$' bytes in the source had the high bit set on so they would not
+be condsidered an end-of-string.  However, the high bit would cause
+the '$' character to be echoed as weird glyph under RomWBW which does
+not strip the high bit when printing.
+
+It has been patched to replace the use of '$' with the more common
+'/' character.
+
+-- WBW 4:48 PM 8/9/2021
