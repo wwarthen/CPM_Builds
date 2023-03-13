@@ -489,6 +489,22 @@ ParseDirLoop:	CALL	GetBank1	; get next byte from dir buffer
 		CALL	GetTpaWord	; get drive and user from dir buffer
 		LD	B,L		; move drive into B
 		LD	C,H		; ... and user into C
+
+		; WBW - 2023-03-12 Jose Luis reported that when using
+		; a named directory to switch to a different DU that
+		; the drive would change, but the user would not.  If
+		; LocalDU is not set during parsing, then the S1/S2
+		; fields are overlaid in ParseExt.  There is probably
+		; a better way to handle this, but the change below
+		; takes care of this with the least possibility of
+		; upsetting anything else.
+		; https://github.com/wwarthen/RomWBW/issues/324
+		; --Wayne Warthen
+		push	bc
+		set	7,c
+		ld	(LocalDU),bc	; set LocalDU for later
+		pop	bc
+		
 		CALL	ParseSetDU	; copy drive/user into target FCB
 		PUSH	BC
 		LD	HL,(ParseDirBufPtr) ; pointer behind dir name
@@ -1375,3 +1391,4 @@ ConOutTabExp:	LD	C,' '
 		RET
 
 ; ***** End of portion 1 *****
+

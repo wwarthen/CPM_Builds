@@ -60,7 +60,7 @@
 false	equ	0
 true	equ	not false
 
-mods	equ	false		; Allow modifications from original
+mods	equ	true		; Allow modifications from original
 ;		.....		; (disassembled) code.  Setting this
 				; false will generate ZPM3LDR.REL
 				; identical to the original distributed
@@ -72,15 +72,18 @@ mods	equ	false		; Allow modifications from original
 				; assembly.
 
 test	defl	false		; Subordinate conditionals
-tight	defl	false		;  /	(Leave these alone.  Set them
-fxGuard	defl	false		; /	 below if you want to.)
+tight	defl	false		;   /	(Leave these alone.  Set them
+fxGuard	defl	false		;  /	 below if you want to.)
+rdSeqC	defl	false		; / 
 
    if	mods			; Selectively enable specific changes ...
 
-test	defl	true 		; . Load TEST.SYS rather than CPM3.SYS
+test	defl	false 		; . Load TEST.SYS rather than CPM3.SYS
 tight	defl	false		; . Optimise code and data space
 fxGuard	defl	true		; . Protect BDOS function number from being
 				;   overwritten.
+rdSeqC	defl	true		; . Restore rdSeq to CPMLDR code
+
    endif
 
 cr	equ	13
@@ -1605,7 +1608,21 @@ recordOK:			; CODE XREF: seg000:0C11-j
 				; and jumped to	a deblocking
 				; routine if not 128 bytes.
 				; Here,	the order is different.
+	
+	; The original ZPMLDR code seemed to result in deblocking
+	; being bypassed ultimately causing catastrophic memory
+	; overwrites.  This mod just syncs things back up to
+	; DRI's CPMLDR.
+
+    if	rdSeqC
+	; Code from DRI CPMLDR
+	ld	a,(phyMsk)
+	or	a
+    else
+	; Original code from ZPMLDR
 	jp	c, setFCB
+    endif
+	
 	jr	nz, readDeblock
 	call	setData
 	call	seek
@@ -1992,3 +2009,4 @@ movef	equ	biospg+75	; 25. memory move function
 readf	equ	biospg+39	; 13. read disk function
 
 	end
+
