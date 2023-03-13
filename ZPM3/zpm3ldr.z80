@@ -26,6 +26,28 @@
 ;| Jon Saxton								|
 ;| January 2014								|
 ;|----------------------------------------------------------------------|
+;| ZPMLDR has a slightly modified version of the rdSeq                  |
+;| procedure (compared to CPMLDR).  It appears that this                |
+;| causes deblocking to be bypassed on the initial disk                 |
+;| read of CPM3.SYS.  As a result, the entire disk sector               |
+;| (512 bytes) is read starting at 0x0080.  This winds up               |
+;| overlaying 0x180 bytes of the start of ZPMLDR.COM causing            |
+;| it to fail catastrophically.                                         |
+;|                                                                      |
+;| According to the documentation at the top of zpm3ldr.z80,            |
+;| zpmldr is normally loaded from system tracks to address              |
+;| 0x0400.  In that scenario, the read of the entire sector             |
+;| would not overlay the start of the application.  So, I               |
+;| suspect this is why this (bug?) is not relevant to many              |
+;| implementations.                                                     |
+;|                                                                      |
+;| I have added a rdSeqC mod below to                                   |
+;| sync the rdSeq procedure back to the DRI CPMLDR version.             |
+;| This seems to allow ZPMLDR to work with RomWBW now.                  |
+;|                                                                      |
+;| Wayne Warthen                                                        |
+;| March, 2023                                                          |
+;|----------------------------------------------------------------------|
 ;| The CP/M Plus bootstrap process					|
 ;| ===============================					|
 ;|									|
